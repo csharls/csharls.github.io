@@ -670,3 +670,119 @@ p {
     gap: 4px;
   }
 }
+
+/* ------------------------------------------------------------------
+   Scroll-driven animations (progressive enhancement).
+   Browsers without animation-timeline keep the IntersectionObserver
+   reveal from main.js. Individual transform properties (translate/scale)
+   are animated so they compose with hover transforms instead of
+   overriding them.
+   ------------------------------------------------------------------ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Reading progress bar under the sticky header */
+    .site-header::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: var(--accent);
+      transform-origin: 0 50%;
+      animation: scrollProgress linear both;
+      animation-timeline: scroll(root block);
+    }
+
+    /* Hero recedes as it scrolls out of view */
+    .hero__photo {
+      animation: heroPhotoExit linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+
+    .hero__intro {
+      animation: heroIntroExit linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+
+    /* Content fades up while entering the viewport */
+    .section__title,
+    .about,
+    .card,
+    .timeline__item,
+    .skills,
+    .education,
+    .contact__email {
+      animation: revealUp linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+
+    /* Each experience row draws an accent rule across its top edge */
+    .timeline__item {
+      position: relative;
+    }
+
+    .timeline__item::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: var(--accent);
+      transform-origin: 0 50%;
+      animation: drawLine linear both;
+      animation-timeline: view();
+      animation-range: entry 30% cover 45%;
+    }
+  }
+}
+
+@keyframes scrollProgress {
+  from {
+    scale: 0 1;
+  }
+
+  to {
+    scale: 1 1;
+  }
+}
+
+@keyframes heroPhotoExit {
+  to {
+    scale: 0.8;
+    opacity: 0.2;
+  }
+}
+
+@keyframes heroIntroExit {
+  to {
+    opacity: 0;
+    translate: 0 -48px;
+  }
+}
+
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    translate: 0 32px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes drawLine {
+  from {
+    scale: 0 1;
+  }
+
+  to {
+    scale: 1 1;
+  }
+}

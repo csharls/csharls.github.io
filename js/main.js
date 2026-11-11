@@ -92,9 +92,11 @@
     emailLink.textContent = address;
   }
 
-  // Fade sections in as they enter the viewport.
+  // Fade sections in as they enter the viewport. Browsers with CSS scroll-driven
+  // animations handle this in styles.css, so the observer is only a fallback.
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!reduceMotion && "IntersectionObserver" in window) {
+  const hasScrollTimelines = window.CSS && CSS.supports("animation-timeline: view()");
+  if (!reduceMotion && !hasScrollTimelines && "IntersectionObserver" in window) {
     const targets = document.querySelectorAll(".section__title, .about, .card, .timeline__item, .skills, .education, .contact__email");
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
